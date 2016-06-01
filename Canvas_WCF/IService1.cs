@@ -79,10 +79,10 @@ namespace Canvas_WCF
         public float size;
 
         [DataMember]
-        public int top;
+        public float top;
 
         [DataMember]
-        public int left;
+        public float left;
 
         [DataMember]
         public float angle;

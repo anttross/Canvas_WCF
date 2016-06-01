@@ -16,7 +16,22 @@ namespace Canvas_WCF
     {
         public int GetOrder(OrderDetailes order)
         {
-            return 0;
+            int client = -1, newOrder = -1;
+
+            client = insertClient(order.clientID, order.phone, order.address, order.fullName, order.city, order.zipCode, order.POB);
+            if (client > 0)
+            {
+                newOrder = insertOrder(order.amount, order.pattern, client, order.deliveryMethod);
+                if (newOrder > 0)
+                {
+                    for (int i = 0; i < order.picturesList.Count; i++)
+                        insertPicture(newOrder, order.picturesList[i].fileName, order.picturesList[i].fileBody, order.picturesList[i].fileSize, order.picturesList[i].size, order.picturesList[i].top, order.picturesList[i].left, order.picturesList[i].angle);
+                    for (int i = 0; i < order.textsList.Count; i++)
+                        insertText(newOrder, order.textsList[i].fontFamily, order.textsList[i].textBody, order.textsList[i].fontColor, order.textsList[i].fontSize, order.textsList[i].top, order.textsList[i].left, order.textsList[i].angle);
+                }
+            }
+               
+            return newOrder;
         }
 
         private static int insertClient(string eMail, string phone, string address, string fullName, string city, int zip, int POB)
@@ -35,7 +50,60 @@ namespace Canvas_WCF
                 return res;
             int.TryParse(dt.Rows[0][0].ToString(), out res);
             return res;
+        }
 
+        private static int insertOrder(int amount, int pattern, int client, int delivery)
+        {
+            List<SqlParameter> _params = new List<SqlParameter>();
+            _params.Add(new SqlParameter("@OrderDate", DateTime.Now));
+            _params.Add(new SqlParameter("@Amount", amount));
+            _params.Add(new SqlParameter("@Pattern", pattern));
+            _params.Add(new SqlParameter("@Client", client));
+            _params.Add(new SqlParameter("@Delivery", delivery));
+            DataTable dt = HELPER_SQL.ExecSP_DataTable("Canvas_DB", "Canvas_DB_Order_Insert", _params);
+            int res = -1;
+            if (dt == null || dt.Rows.Count == 0)
+                return res;
+            int.TryParse(dt.Rows[0][0].ToString(), out res);
+            return res;
+        }
+
+        private static int insertPicture(int ord_ID, string fileName, byte[] fileBody, uint fileSize,  float size, float top, float left, float angle)
+        {
+            List <SqlParameter> _params = new List<SqlParameter>();
+            _params.Add(new SqlParameter("@ORD_ID", ord_ID));
+            _params.Add(new SqlParameter("@FileName", fileName));
+            _params.Add(new SqlParameter("@FileBody", fileBody));
+            _params.Add(new SqlParameter("@FileSize", fileSize));
+            _params.Add(new SqlParameter("@Size", size));
+            _params.Add(new SqlParameter("@Top", top));
+            _params.Add(new SqlParameter("@Left", left));
+            _params.Add(new SqlParameter("@Angle", angle));
+            DataTable dt = HELPER_SQL.ExecSP_DataTable("Canvas_DB", "Canvas_DB_Order_Insert", _params);
+            int res = -1;
+            if (dt == null || dt.Rows.Count == 0)
+                return res;
+            int.TryParse(dt.Rows[0][0].ToString(), out res);
+            return res;
+        }
+
+        private static int insertText(int ord_ID, string font, string body, string color, int size, float top, float left, float angle)
+        {
+            List<SqlParameter> _params = new List<SqlParameter>();
+            _params.Add(new SqlParameter("@ORD_ID", ord_ID));
+            _params.Add(new SqlParameter("@Font", font));
+            _params.Add(new SqlParameter("@Body", body));
+            _params.Add(new SqlParameter("@Color", color));
+            _params.Add(new SqlParameter("@Size", size));
+            _params.Add(new SqlParameter("@Top", top));
+            _params.Add(new SqlParameter("@Left", left));
+            _params.Add(new SqlParameter("@Angle", angle));
+            DataTable dt = HELPER_SQL.ExecSP_DataTable("Canvas_DB", "Canvas_DB_Order_Insert", _params);
+            int res = -1;
+            if (dt == null || dt.Rows.Count == 0)
+                return res;
+            int.TryParse(dt.Rows[0][0].ToString(), out res);
+            return res;
         }
     }
 }
