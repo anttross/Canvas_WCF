@@ -188,7 +188,7 @@ public static class HELPER_SQL
 
     private static string getConnectionString(String SqlConnectionStringName)
     {
-        return ConfigurationManager.ConnectionStrings[(SqlConnectionStringName != null) ? SqlConnectionStringName : "Flight_DB"].ConnectionString;
+        return ConfigurationManager.ConnectionStrings[(SqlConnectionStringName != null) ? SqlConnectionStringName : "Canvas_DB"].ConnectionString;
     }
     #endregion
 }
